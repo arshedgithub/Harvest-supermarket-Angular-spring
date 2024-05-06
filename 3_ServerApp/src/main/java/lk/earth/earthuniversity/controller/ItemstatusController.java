@@ -1,8 +1,6 @@
 package lk.earth.earthuniversity.controller;
 
-import lk.earth.earthuniversity.dao.BrandDao;
 import lk.earth.earthuniversity.dao.ItemstatusDao;
-import lk.earth.earthuniversity.entity.Brand;
 import lk.earth.earthuniversity.entity.Itemstatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
