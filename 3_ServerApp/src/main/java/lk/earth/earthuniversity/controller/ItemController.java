@@ -21,10 +21,22 @@ public class ItemController {
 
     @GetMapping(produces = "application/json")
 //    @PreAuthorize("hasAuthority('employee-select')")
-    public List<Item> getAll() {
+    public List<Item> get(@RequestParam HashMap<String, String> params) {
 
-        return this.itemdao.findAll();
+        List<Item> items = this.itemdao.findAll();
 
+        if (params.isEmpty()) return items;
+        String itemname = params.get("itemname");
+        String itemstatusid = params.get("itemstatusid");
+        String categoryid = params.get("categoryid");
+
+        Stream<Item> itemStream = items.stream();
+
+        if(itemname != null) itemStream = itemStream.filter(item -> item.getName().contains(itemname));
+        if(itemstatusid != null) itemStream = itemStream.filter(item -> item.getItemstatus().getId() == Integer.parseInt(itemstatusid));
+        if(categoryid != null) itemStream = itemStream.filter(item -> item.getSubcategory().getCategory().getId() == Integer.parseInt((categoryid)));
+
+        return itemStream.collect(Collectors.toList());
     }
 
 //    @GetMapping(produces = "application/json")
