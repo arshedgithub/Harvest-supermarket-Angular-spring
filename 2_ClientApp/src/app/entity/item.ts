@@ -2,8 +2,6 @@ import {Brand} from "./brand";
 import {Unittype} from "./unittype";
 import {Subcategory} from "./Subcategory";
 import {Itemstatus} from "./itemstatus";
-import String from "$GLOBAL$";
-import name from "$GLOBAL$";
 
 export class Item {
 
