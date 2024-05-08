@@ -7,6 +7,7 @@ export class AuthorizationManager {
   private readonly localStorageUsreName = 'username';
   private readonly localStorageButtonKey = 'buttonState';
   private readonly localStorageAdmMenus = 'admMenuState';
+  private readonly localStorageinvMenus = 'invMenuState';
   private readonly localStorageAcdMenus = 'acdMenuState';
   private readonly localStorageRegMenus = 'regMenuState';
   private readonly localStorageClsMenus = 'clsMenuState';
@@ -20,6 +21,10 @@ export class AuthorizationManager {
     { name: 'User', accessFlag: true, routerLink: 'user' },
     { name: 'Privilege', accessFlag: true, routerLink: 'privilege' },
     { name: 'Operations', accessFlag: true, routerLink: 'operation' }
+  ];
+
+  invMenuItems = [
+    { name: 'Item', accessFlag: true, routerLink: 'item' },
   ];
 
   acdMenuItems = [
@@ -60,6 +65,10 @@ export class AuthorizationManager {
       menuItem.accessFlag = modules.some(module => module.module.toLowerCase() === menuItem.name.toLowerCase());
     });
 
+    this.invMenuItems.forEach(menuItem => {
+      menuItem.accessFlag = modules.some(module => module.module.toLowerCase() === menuItem.name.toLowerCase());
+    });
+
     this.acdMenuItems.forEach(menuItem => {
       menuItem.accessFlag = modules.some(module => module.module.toLowerCase() === menuItem.name.toLowerCase());
     });
@@ -74,6 +83,7 @@ export class AuthorizationManager {
 
     // Save menu state in localStorage
     localStorage.setItem(this.localStorageAdmMenus, JSON.stringify(this.admMenuItems));
+    localStorage.setItem(this.localStorageinvMenus, JSON.stringify(this.invMenuItems));
     localStorage.setItem(this.localStorageAcdMenus, JSON.stringify(this.acdMenuItems));
     localStorage.setItem(this.localStorageRegMenus, JSON.stringify(this.regMenuItems));
     localStorage.setItem(this.localStorageClsMenus, JSON.stringify(this.clsMenuItems));
@@ -141,6 +151,11 @@ export class AuthorizationManager {
       this.admMenuItems = JSON.parse(admMenuState);
     }
 
+    const invMenuState = localStorage.getItem(this.localStorageinvMenus);
+    if (invMenuState) {
+      this.invMenuItems = JSON.parse(invMenuState);
+    }
+
     const acdMenuState = localStorage.getItem(this.localStorageAcdMenus);
     if (acdMenuState) {
       this.acdMenuItems = JSON.parse(acdMenuState);
@@ -167,6 +182,7 @@ export class AuthorizationManager {
 
   clearMenuState(): void {
     localStorage.removeItem(this.localStorageAdmMenus);
+    localStorage.removeItem(this.localStorageinvMenus);
     localStorage.removeItem(this.localStorageAcdMenus);
     localStorage.removeItem(this.localStorageRegMenus);
     localStorage.removeItem(this.localStorageClsMenus);
