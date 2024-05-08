@@ -49,7 +49,7 @@
             <mat-icon>event_note</mat-icon>
             Inventory</a></mat-list-item>
         </mat-expansion-panel-header>
-        <ng-container *ngFor="let menuItem of admMenuItems">
+        <ng-container *ngFor="let menuItem of invMenuItems">
           <mat-list-item *ngIf="menuItem.accessFlag">
             <mat-list-item class="item" [routerLink]="menuItem.accessFlag ? menuItem.routerLink : null"><a>{{ menuItem.name }}</a></mat-list-item>
           </mat-list-item>
