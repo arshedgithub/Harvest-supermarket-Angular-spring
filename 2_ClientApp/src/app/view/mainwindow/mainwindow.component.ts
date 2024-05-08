@@ -26,6 +26,7 @@ export class MainwindowComponent {
     localStorage.removeItem("Authorization");
   }
     admMenuItems = this.authService.admMenuItems;
+    invMenuItems = this.authService.invMenuItems;
     acdMenuItems = this.authService.acdMenuItems;
     regMenuItems = this.authService.regMenuItems;
     clsMenuItems = this.authService.clsMenuItems;
@@ -34,12 +35,8 @@ export class MainwindowComponent {
     switch (category) {
       case 'Admin':
         return this.admMenuItems.some(menuItem => menuItem.accessFlag);
-      case 'Academic':
-        return this.acdMenuItems.some(menuItem => menuItem.accessFlag);
-        case 'Registration':
-        return this.regMenuItems.some(menuItem => menuItem.accessFlag);
-        case 'Class':
-        return this.clsMenuItems.some(menuItem => menuItem.accessFlag);
+      case 'Inventory':
+        return this.invMenuItems.some(menuItem => menuItem.accessFlag);
       default:
         return false;
     }
