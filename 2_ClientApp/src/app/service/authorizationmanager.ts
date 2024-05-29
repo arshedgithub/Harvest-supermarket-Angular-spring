@@ -7,7 +7,7 @@ export class AuthorizationManager {
   private readonly localStorageUsreName = 'username';
   private readonly localStorageButtonKey = 'buttonState';
   private readonly localStorageAdmMenus = 'admMenuState';
-  private readonly localStorageinvMenus = 'invMenuState';
+  private readonly localStorageinvMenus = 'inveMenuState';
   private readonly localStorageAcdMenus = 'acdMenuState';
   private readonly localStorageRegMenus = 'regMenuState';
   private readonly localStorageClsMenus = 'clsMenuState';
@@ -151,9 +151,9 @@ export class AuthorizationManager {
       this.admMenuItems = JSON.parse(admMenuState);
     }
 
-    const invMenuState = localStorage.getItem(this.localStorageinvMenus);
-    if (invMenuState) {
-      this.invMenuItems = JSON.parse(invMenuState);
+    const inveMenuState = localStorage.getItem(this.localStorageinvMenus);
+    if (inveMenuState) {
+      this.invMenuItems = JSON.parse(inveMenuState);
     }
 
     const acdMenuState = localStorage.getItem(this.localStorageAcdMenus);
