@@ -6,6 +6,10 @@ import {Item} from "../../../entity/item";
 import {UiAssist} from "../../../util/ui/ui.assist";
 import {ItemService} from "../../../service/itemservice";
 import {Employee} from "../../../entity/employee";
+import {Itemstatus} from "../../../entity/itemstatus";
+import {Category} from "../../../entity/category";
+import {ItemStatusService} from "../../../service/itemstatusservice";
+import {CategoryService} from "../../../service/categoryservice";
 
 @Component({
   selector: 'app-item',
@@ -29,10 +33,13 @@ export class ItemComponent {
   imageurl: string = '';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  itemstauses: Array<Itemstatus> = [];
+  categories: Array<Category> = [];
+
   uiassist: UiAssist;
 
 
-  constructor(private fb:FormBuilder, private is:ItemService) {
+  constructor(private fb:FormBuilder, private is:ItemService, private iss: ItemStatusService, private cts: CategoryService) {
 
     this.uiassist = new UiAssist(this);
 
@@ -53,6 +60,14 @@ export class ItemComponent {
 
   initialize() {
     this.createView();
+
+    this.iss.getAllList().then((ists: Itemstatus[]) => {
+      this.itemstauses = ists;
+    });
+
+    this.cts.getAllList().then((ctss: Category[]) => {
+      this.categories = ctss;
+    })
   }
 
   createView() {
