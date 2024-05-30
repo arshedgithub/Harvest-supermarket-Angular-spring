@@ -10,6 +10,8 @@ import {Itemstatus} from "../../../entity/itemstatus";
 import {Category} from "../../../entity/category";
 import {ItemStatusService} from "../../../service/itemstatusservice";
 import {CategoryService} from "../../../service/categoryservice";
+import {ConfirmComponent} from "../../../util/dialog/confirm/confirm.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-item',
@@ -27,6 +29,7 @@ export class ItemComponent {
     'Search by Designation', 'Search by Full Name', 'Search by Modi'];
 
   public csearch!: FormGroup;
+  public ssearch!: FormGroup;
 
   items: Array<Item> = [];
   data!: MatTableDataSource<Item>;
@@ -39,7 +42,13 @@ export class ItemComponent {
   uiassist: UiAssist;
 
 
-  constructor(private fb:FormBuilder, private is:ItemService, private iss: ItemStatusService, private cts: CategoryService) {
+  constructor(
+    private fb:FormBuilder,
+    private is:ItemService,
+    private iss: ItemStatusService,
+    private cts: CategoryService,
+    private dg: MatDialog
+  ) {
 
     this.uiassist = new UiAssist(this);
 
@@ -50,7 +59,13 @@ export class ItemComponent {
       'cssprice': new FormControl(),
       'cspprice': new FormControl(),
       'csmodi': new FormControl()
-    })
+    });
+
+    this.ssearch = this.fb.group({
+      'ssname': new FormControl(),
+      'ssitemstatus': new FormControl(),
+      'sscategory': new FormControl()
+    });
 
   }
 
@@ -92,6 +107,10 @@ export class ItemComponent {
       });
   }
 
+  getModi(element: Item) {
+    return element.name + '(' + element.code + ')';
+  }
+
   filterTable():void {
     const cssearchdata = this.csearch.getRawValue();
 
@@ -104,13 +123,39 @@ export class ItemComponent {
         (cssearchdata.csmodi == null || this.getModi(item).toLowerCase().includes(cssearchdata.csmodi));
     });
     this.data.filter = "xx";
-
   }
 
+  btnSearchMc():void {
+    const ssearchdata = this.ssearch.getRawValue();
 
+    let name = ssearchdata.ssname;
+    let categoryid = ssearchdata.sscategory;
+    let itemstatusid = ssearchdata.ssitemstatus;
 
-  getModi(element: Item) {
-    return element.name + '(' + element.code + ')';
+    let query:string = "";
+
+    if (name != null && name.trim() != "") query = query + "&itemname=" + name;
+    if (categoryid != null ) query = query + "&categoryid=" + categoryid;
+    if (itemstatusid != null ) query = query + "&itemstatusid=" + itemstatusid;
+
+    if (query != "") query = query.replace(/^./, '?');
+    this.loadTable(query);
+  }
+
+  btnSearchClearMc(): void {
+
+    const confirm = this.dg.open(ConfirmComponent, {
+      width: '500px',
+      data: {heading: "Search Clear", message: "Are you sure to Clear the Search?"}
+    });
+
+    confirm.afterClosed().subscribe(async result => {
+      if (result) {
+        this.ssearch.reset();
+        this.loadTable("");
+      }
+    });
+
   }
 
 
