@@ -5,13 +5,14 @@ import {MatPaginator} from "@angular/material/paginator";
 import {Item} from "../../../entity/item";
 import {UiAssist} from "../../../util/ui/ui.assist";
 import {ItemService} from "../../../service/itemservice";
-import {Employee} from "../../../entity/employee";
 import {Itemstatus} from "../../../entity/itemstatus";
 import {Category} from "../../../entity/category";
 import {ItemStatusService} from "../../../service/itemstatusservice";
 import {CategoryService} from "../../../service/categoryservice";
 import {ConfirmComponent} from "../../../util/dialog/confirm/confirm.component";
 import {MatDialog} from "@angular/material/dialog";
+import {BrandService} from "../../../service/brandservice";
+import {SubcategoryService} from "../../../service/subcategoryservice";
 
 @Component({
   selector: 'app-item',
@@ -47,6 +48,8 @@ export class ItemComponent {
     private is:ItemService,
     private iss: ItemStatusService,
     private cts: CategoryService,
+    private subcts: SubcategoryService,
+    private brs: BrandService,
     private dg: MatDialog
   ) {
 
