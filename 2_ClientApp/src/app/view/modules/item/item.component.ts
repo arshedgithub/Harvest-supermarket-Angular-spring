@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {Item} from "../../../entity/item";
@@ -13,6 +13,7 @@ import {ConfirmComponent} from "../../../util/dialog/confirm/confirm.component";
 import {MatDialog} from "@angular/material/dialog";
 import {BrandService} from "../../../service/brandservice";
 import {SubcategoryService} from "../../../service/subcategoryservice";
+import {UnittypeService} from "../../../service/unittypeservice";
 
 @Component({
   selector: 'app-item',
@@ -31,6 +32,7 @@ export class ItemComponent {
 
   public csearch!: FormGroup;
   public ssearch!: FormGroup;
+  public form!: FormGroup;
 
   items: Array<Item> = [];
   data!: MatTableDataSource<Item>;
@@ -50,6 +52,7 @@ export class ItemComponent {
     private cts: CategoryService,
     private subcts: SubcategoryService,
     private brs: BrandService,
+    private uns: UnittypeService,
     private dg: MatDialog
   ) {
 
