@@ -3,13 +3,12 @@ package lk.earth.earthuniversity.controller;
 import lk.earth.earthuniversity.dao.SubcategoryDao;
 import lk.earth.earthuniversity.entity.Subcategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @CrossOrigin
 @RestController
@@ -20,18 +19,16 @@ public class SubcategoryController {
     private SubcategoryDao subcategoryDao;
 
     @GetMapping(path ="/list",produces = "application/json")
-    public List<Subcategory> get() {
+    public List<Subcategory> get(@RequestParam HashMap<String, String> params) {
 
         List<Subcategory> subcategories = this.subcategoryDao.findAll();
 
-        subcategories = subcategories.stream().map(
-                subcategory -> { Subcategory s = new Subcategory();
-                    s.setId(subcategory.getId());
-                    s.setName(subcategory.getName());
-                    return s; }
-        ).collect(Collectors.toList());
+        if (params.isEmpty()) return subcategories;
 
-        return subcategories;
+        String categoryid = params.get("categoryid");
+        Stream<Subcategory> subCatStream = subcategories.stream();
+        if (categoryid != null) subCatStream = subCatStream.filter(s -> s.getCategory().getId() == Integer.parseInt(categoryid));
+        return subCatStream.collect(Collectors.toList());
 
     }
 
