@@ -6,7 +6,34 @@
         <mat-card-title>Item Detail</mat-card-title>
       </mat-card-header>
 
-      <mat-card-content></mat-card-content>
+      <mat-card-content id="itemform">
+        <form [formGroup]="form">
+          <mat-form-field appearance="outline">
+            <mat-label>Select a Category</mat-label>
+            <mat-select formControlName="category">
+              <mat-option value="null">Not Selected</mat-option>
+              <mat-option *ngFor="let category of categories" [value]="category">{{ category.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Select a Subcategory</mat-label>
+            <mat-select formControlName="subcategory">
+              <mat-option value="null">Not Selected</mat-option>
+              <mat-option *ngFor="let subcategory of subcategories" [value]="subcategory">{{ subcategory.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Select a Brand</mat-label>
+            <mat-select formControlName="brand">
+              <mat-option value="null">Not Selected</mat-option>
+              <mat-option *ngFor="let brand of brands" [value]="brand">{{ brand.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </form>
+      </mat-card-content>
 
     </mat-card>
   </mat-grid-tile>

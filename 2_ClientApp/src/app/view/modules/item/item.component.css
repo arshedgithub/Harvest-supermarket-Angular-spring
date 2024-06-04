@@ -16,13 +16,13 @@ mat-card-header { background: #c0d9c3; }
 
 
 
-/* Employee Form */
-#employeeform {
+/* Item Form */
+#itemform {
   padding-top: 20px;
 }
 
 
-/* Employee Form > Photo Panel  */
+/* Item Form > Photo Panel  */
 #imgpanel {
   height: 100px;
   margin-bottom: 30px;
@@ -71,7 +71,7 @@ mat-card-header { background: #c0d9c3; }
   background-color: inherit!important;
 }
 
-#employeeform mat-form-field .ng-dirty{
+#itemform mat-form-field .ng-dirty{
   background-color: gold;
 }
 
@@ -80,7 +80,7 @@ button:disabled {
   opacity: 0.5;
 }
 
-#employeeform mat-form-field .ng-valid,
+#itemform mat-form-field .ng-valid,
 .ng-valid.required {
   background-color: lightgreen;
 }

@@ -14,6 +14,8 @@ import {MatDialog} from "@angular/material/dialog";
 import {BrandService} from "../../../service/brandservice";
 import {SubcategoryService} from "../../../service/subcategoryservice";
 import {UnittypeService} from "../../../service/unittypeservice";
+import {Subcategory} from "../../../entity/Subcategory";
+import {Brand} from "../../../entity/brand";
 
 @Component({
   selector: 'app-item',
@@ -41,6 +43,8 @@ export class ItemComponent {
 
   itemstauses: Array<Itemstatus> = [];
   categories: Array<Category> = [];
+  subcategories: Array<Subcategory> = [];
+  brands: Array<Brand> = [];
 
   uiassist: UiAssist;
 
@@ -73,6 +77,22 @@ export class ItemComponent {
       'sscategory': new FormControl()
     });
 
+    this.form = this.fb.group({
+      'category': new FormControl('', Validators.required),
+      'subcategory': new FormControl('', Validators.required),
+      'brand': new FormControl('', Validators.required),
+      'name': new FormControl('', Validators.required),
+      'code': new FormControl('', Validators.required),
+      'unittype': new FormControl('', Validators.required),
+      'pprice': new FormControl('', Validators.required),
+      'sprice': new FormControl('', Validators.required),
+      'photo': new FormControl(''),
+      'quantity': new FormControl('', Validators.required),
+      'rop': new FormControl('', Validators.required),
+      'itemstatus': new FormControl('', Validators.required),
+      'dointroduced': new FormControl('', Validators.required)
+    });
+
   }
 
   ngOnInit() {
@@ -88,7 +108,10 @@ export class ItemComponent {
 
     this.cts.getAllList().then((ctss: Category[]) => {
       this.categories = ctss;
-    })
+    });
+
+    this.filterSubcategories();
+    this.filterBrands();
   }
 
   createView() {
@@ -164,5 +187,22 @@ export class ItemComponent {
 
   }
 
+  filterSubcategories():void {
+    this.form.get("category")?.valueChanges.subscribe((cat: Category) => {
+      let qry = "?categoryid=" + cat.id;
+      this.subcts.getAllList(qry).then((subs: Subcategory[]) => {
+        this.subcategories = subs;
+      });
+    });
+  }
+
+  filterBrands():void {
+    this.form.get("category")?.valueChanges.subscribe((cat: Category) => {
+      let qry = "?categoryid=" + cat.id;
+      this.brs.getAllList(qry).then((brands: Brand[]) => {
+        this.brands = brands;
+      });
+    });
+  }
 
 }
