@@ -21,6 +21,9 @@ mat-card-header { background: #c0d9c3; }
   padding-top: 20px;
 }
 
+#radio {
+  border: 2px solid red;
+}
 
 /* Item Form > Photo Panel  */
 #imgpanel {

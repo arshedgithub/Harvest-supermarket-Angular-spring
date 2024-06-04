@@ -32,6 +32,16 @@
             </mat-select>
           </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Item Name</mat-label>
+            <input matInput formControlName="name">
+          </mat-form-field>
+
+          <div id="radio">
+            <mat-radio-group formControlName="unittype">
+              <mat-radio-button *ngFor="let unittype of unittypes" [value]="unittype">{{ unittype.name }}</mat-radio-button>
+            </mat-radio-group>
+          </div>
         </form>
       </mat-card-content>
 

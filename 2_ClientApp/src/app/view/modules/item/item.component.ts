@@ -16,6 +16,8 @@ import {SubcategoryService} from "../../../service/subcategoryservice";
 import {UnittypeService} from "../../../service/unittypeservice";
 import {Subcategory} from "../../../entity/Subcategory";
 import {Brand} from "../../../entity/brand";
+import {Unittype} from "../../../entity/unittype";
+import {RegexService} from "../../../service/regexservice";
 
 @Component({
   selector: 'app-item',
@@ -45,9 +47,9 @@ export class ItemComponent {
   categories: Array<Category> = [];
   subcategories: Array<Subcategory> = [];
   brands: Array<Brand> = [];
+  unittypes: Array<Unittype> = [];
 
   uiassist: UiAssist;
-
 
   constructor(
     private fb:FormBuilder,
@@ -57,6 +59,7 @@ export class ItemComponent {
     private subcts: SubcategoryService,
     private brs: BrandService,
     private uns: UnittypeService,
+    private rxs: RegexService,
     private dg: MatDialog
   ) {
 
@@ -110,8 +113,14 @@ export class ItemComponent {
       this.categories = ctss;
     });
 
+    this.uns.getAllList().then((units: Category[]) => {
+      this.unittypes = units;
+    });
+
     this.filterSubcategories();
     this.filterBrands();
+    this.getItemName();
+
   }
 
   createView() {
@@ -202,6 +211,14 @@ export class ItemComponent {
       this.brs.getAllList(qry).then((brands: Brand[]) => {
         this.brands = brands;
       });
+    });
+  }
+
+  getItemName(): void {
+    this.form.get("brand")?.valueChanges.subscribe((brand: Brand) => {
+      let subcategory = this.form.get("subcategory")?.value;
+      let itemname = brand.name + " " + subcategory.name;
+      this.form.get("name")?.setValue(itemname);
     });
   }
 
