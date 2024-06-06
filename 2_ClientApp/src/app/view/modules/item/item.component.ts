@@ -18,6 +18,7 @@ import {Subcategory} from "../../../entity/Subcategory";
 import {Brand} from "../../../entity/brand";
 import {Unittype} from "../../../entity/unittype";
 import {RegexService} from "../../../service/regexservice";
+import {DatePipe} from "@angular/common";
 
 @Component({
   selector: 'app-item',
@@ -41,6 +42,7 @@ export class ItemComponent {
   items: Array<Item> = [];
   data!: MatTableDataSource<Item>;
   imageurl: string = '';
+  imageitmurl: string = 'assets/default.png';
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   itemstauses: Array<Itemstatus> = [];
@@ -49,7 +51,9 @@ export class ItemComponent {
   brands: Array<Brand> = [];
   unittypes: Array<Unittype> = [];
 
+  regexes!: any;
   uiassist: UiAssist;
+  col!: { [p: string]: any; }
 
   constructor(
     private fb:FormBuilder,
@@ -60,7 +64,8 @@ export class ItemComponent {
     private brs: BrandService,
     private uns: UnittypeService,
     private rxs: RegexService,
-    private dg: MatDialog
+    private dg: MatDialog,
+    private dp: DatePipe
   ) {
 
     this.uiassist = new UiAssist(this);
@@ -117,15 +122,64 @@ export class ItemComponent {
       this.unittypes = units;
     });
 
+    this.rxs.get("item").then((regexs: []) => {
+      this.regexes = regexs;
+      this.createForm();
+    });
+
     this.filterSubcategories();
     this.filterBrands();
     this.getItemName();
+    this.changeRadioColor();
 
   }
 
   createView() {
     this.imageurl = 'assets/pending.gif';
     this.loadTable("");
+  }
+
+  createForm() {
+
+    this.form.controls['category'].setValidators([Validators.required]);
+    this.form.controls['subcategory'].setValidators([Validators.required]);
+    this.form.controls['brand'].setValidators([Validators.required]);
+    this.form.controls['name'].setValidators([Validators.required, Validators.pattern(this.regexes['name']['regex'])]);
+    this.form.controls['code'].setValidators([Validators.required, Validators.pattern(this.regexes['code']['regex'])]);
+    this.form.controls['unittype'].setValidators([Validators.required]);
+    this.form.controls['pprice'].setValidators([Validators.required, Validators.pattern(this.regexes['pprice']['regex'])]);
+    this.form.controls['sprice'].setValidators([Validators.required, Validators.pattern(this.regexes['sprice']['regex'])]);
+    this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
+    this.form.controls['photo'];
+    this.form.controls['quantity'].setValidators([Validators.required,Validators.pattern(this.regexes['quantity']['regex'])]);
+    this.form.controls['rop'].setValidators([Validators.required,Validators.pattern(this.regexes['rop']['regex'])]);
+    this.form.controls['itemstatus'].setValidators([Validators.required]);
+    this.form.controls['dointroduced'].setValidators([Validators.required]);
+
+    Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
+
+    // for (const controlName in this.form.controls) {
+    //   const control = this.form.controls[controlName];
+    //   control.valueChanges.subscribe(value => {
+    //       // @ts-ignore
+    //       if (controlName == "dobirth" || controlName == "doassignment")
+    //         value = this.dp.transform(new Date(value), 'yyyy-MM-dd');
+    //
+    //       if (this.oldemployee != undefined && control.valid) {
+    //         // @ts-ignore
+    //         if (value === this.employee[controlName]) {
+    //           control.markAsPristine();
+    //         } else {
+    //           control.markAsDirty();
+    //         }
+    //       } else {
+    //         control.markAsPristine();
+    //       }
+    //     }
+    //   );
+    // }
+
+    // this.enableButtons(true,false,false);
   }
 
   loadTable(query: string) {
@@ -220,6 +274,30 @@ export class ItemComponent {
       let itemname = brand.name + " " + subcategory.name;
       this.form.get("name")?.setValue(itemname);
     });
+  }
+
+  changeRadioColor(): void {
+    this.form.get("unittype")?.valueChanges.subscribe(() => {
+      let sts = this.form.get("unittype")?.invalid;
+      if (!sts) this.col = {"border" : "1px solid gray"}
+      else this.col = {"border" : "1px solid #e15959"}
+    });
+  }
+
+  selectImage(e: any): void {
+    if (e.target.files) {
+      let reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = (event: any) => {
+        this.imageitmurl = event.target.result;
+        this.form.controls['photo'].clearValidators();
+      }
+    }
+  }
+
+  clearImage(): void {
+    this.imageitmurl = 'assets/default.png';
+    this.form.controls['photo'].setErrors({'required': true});
   }
 
 }

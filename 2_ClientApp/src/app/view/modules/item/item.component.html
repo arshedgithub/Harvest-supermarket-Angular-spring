@@ -39,9 +39,57 @@
 
           <div id="radio">
             <mat-radio-group formControlName="unittype">
-              <mat-radio-button *ngFor="let unittype of unittypes" [value]="unittype">{{ unittype.name }}</mat-radio-button>
+              <mat-radio-button *ngFor="let unittype of unittypes" [value]="unittype">{{ unittype.name }}&nbsp;</mat-radio-button>
             </mat-radio-group>
           </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Purchase Price</mat-label>
+            <input matInput formControlName="pprice">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Sale Price</mat-label>
+            <input matInput formControlName="sprice">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Mobile</mat-label>
+            <input matInput formControlName="mobile">
+          </mat-form-field>
+
+          <div id="imgpanel">
+            <img [src]="imageitmurl">
+            <input id="userImage" hidden="hidden" (change)="selectImage($event)" Select type="file" formControlName="photo">
+            <label for="userImage" id="selectbutton">Select</label>
+            <label id="clearbutton" (click)="clearImage()">Clear</label>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Quantity</mat-label>
+            <input matInput formControlName="quantity">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Re-Order Point</mat-label>
+            <input matInput formControlName="rop">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Select a Brand</mat-label>
+            <mat-select formControlName="itemstatus">
+              <mat-option value="null">Not Selected</mat-option>
+              <mat-option *ngFor="let itemstatus of itemstauses" [value]="itemstatus">{{ itemstatus.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Assignment Date</mat-label>
+            <input matInput [matDatepicker]="intdate" formControlName="dointroduced">
+            <mat-datepicker-toggle matIconSuffix [for]="intdate"></mat-datepicker-toggle>
+            <mat-datepicker #intdate></mat-datepicker>
+          </mat-form-field>
+
         </form>
       </mat-card-content>
 
