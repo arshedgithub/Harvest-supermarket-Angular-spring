@@ -24,6 +24,7 @@ mat-card-header { background: #c0d9c3; }
 #radio {
   border: 1px solid #e15959;
   padding: 2%;
+  margin-top: 5px;
   margin-left: -4px;
   margin-bottom: 5%;
   width: 95%;

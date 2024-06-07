@@ -19,6 +19,8 @@ import {Brand} from "../../../entity/brand";
 import {Unittype} from "../../../entity/unittype";
 import {RegexService} from "../../../service/regexservice";
 import {DatePipe} from "@angular/common";
+import {MessageComponent} from "../../../util/dialog/message/message.component";
+import {from, last} from "rxjs";
 
 @Component({
   selector: 'app-item',
@@ -54,6 +56,14 @@ export class ItemComponent {
   regexes!: any;
   uiassist: UiAssist;
   col!: { [p: string]: any; }
+
+  enaadd: boolean = false;
+  enaupd: boolean = false;
+  enadel: boolean = false;
+
+  item!: Item;
+  olditem!: Item;
+  lastitemcode!: string;
 
   constructor(
     private fb:FormBuilder,
@@ -98,7 +108,7 @@ export class ItemComponent {
       'quantity': new FormControl('', Validators.required),
       'rop': new FormControl('', Validators.required),
       'itemstatus': new FormControl('', Validators.required),
-      'dointroduced': new FormControl('', Validators.required)
+      'dointroduced': new FormControl({value: new Date(),  disabled: true}, Validators.required)
     });
 
   }
@@ -122,7 +132,7 @@ export class ItemComponent {
       this.unittypes = units;
     });
 
-    this.rxs.get("item").then((regexs: []) => {
+    this.rxs.get("items").then((regexs: []) => {
       this.regexes = regexs;
       this.createForm();
     });
@@ -149,8 +159,7 @@ export class ItemComponent {
     this.form.controls['unittype'].setValidators([Validators.required]);
     this.form.controls['pprice'].setValidators([Validators.required, Validators.pattern(this.regexes['pprice']['regex'])]);
     this.form.controls['sprice'].setValidators([Validators.required, Validators.pattern(this.regexes['sprice']['regex'])]);
-    this.form.controls['mobile'].setValidators([Validators.required, Validators.pattern(this.regexes['mobile']['regex'])]);
-    this.form.controls['photo'];
+    this.form.controls['photo'].setValidators([Validators.required]);
     this.form.controls['quantity'].setValidators([Validators.required,Validators.pattern(this.regexes['quantity']['regex'])]);
     this.form.controls['rop'].setValidators([Validators.required,Validators.pattern(this.regexes['rop']['regex'])]);
     this.form.controls['itemstatus'].setValidators([Validators.required]);
@@ -158,28 +167,29 @@ export class ItemComponent {
 
     Object.values(this.form.controls).forEach( control => { control.markAsTouched(); } );
 
-    // for (const controlName in this.form.controls) {
-    //   const control = this.form.controls[controlName];
-    //   control.valueChanges.subscribe(value => {
-    //       // @ts-ignore
-    //       if (controlName == "dobirth" || controlName == "doassignment")
-    //         value = this.dp.transform(new Date(value), 'yyyy-MM-dd');
-    //
-    //       if (this.oldemployee != undefined && control.valid) {
-    //         // @ts-ignore
-    //         if (value === this.employee[controlName]) {
-    //           control.markAsPristine();
-    //         } else {
-    //           control.markAsDirty();
-    //         }
-    //       } else {
-    //         control.markAsPristine();
-    //       }
-    //     }
-    //   );
-    // }
+    for (const controlName in this.form.controls) {
+      const control = this.form.controls[controlName];
+      control.valueChanges.subscribe(value => {
+          // @ts-ignore
+          if (controlName == "dointoduced")
+            // transform date to custom format
+            value = this.dp.transform(new Date(value), 'yyyy-MM-dd');
 
-    // this.enableButtons(true,false,false);
+          if (this.olditem != undefined && control.valid) {
+            // @ts-ignore
+            if (value === this.item[controlName]) {
+              control.markAsPristine();
+            } else {
+              control.markAsDirty();
+            }
+          } else {
+            control.markAsPristine();
+          }
+        }
+      );
+    }
+
+    this.enableButtons(true,false,false);
   }
 
   loadTable(query: string) {
@@ -196,6 +206,7 @@ export class ItemComponent {
       .finally(() => {
         this.data = new MatTableDataSource(this.items);
         this.data.paginator = this.paginator;
+        this.getLastItemCode();
       });
   }
 
@@ -276,6 +287,13 @@ export class ItemComponent {
     });
   }
 
+  getLastItemCode() {
+    let obiItems = from(this.items)
+    obiItems.pipe(last()).subscribe((item: Item) => {
+      this.lastitemcode = item.code;
+    });
+
+  }
   changeRadioColor(): void {
     this.form.get("unittype")?.valueChanges.subscribe(() => {
       let sts = this.form.get("unittype")?.invalid;
@@ -299,5 +317,113 @@ export class ItemComponent {
     this.imageitmurl = 'assets/default.png';
     this.form.controls['photo'].setErrors({'required': true});
   }
+
+  enableButtons(add:boolean, upd:boolean, del:boolean){
+    this.enaadd=add;
+    this.enaupd=upd;
+    this.enadel=del;
+  }
+
+  getErrors() {
+    let errors = '';
+    for (const controlName in this.form.controls) {
+      const control = this.form.controls[controlName];
+      if (control.errors) {
+        if (this.regexes[controlName]){
+            errors = errors + "<br>" + this.regexes[controlName]['message']
+          errors = errors + "<br>Invalid " + controlName
+        }
+      }
+    }
+    return errors;
+  }
+
+  add() {
+
+    let errors = this.getErrors();
+    console.log(errors)
+
+    if (errors != "") {
+      const errmsg = this.dg.open(MessageComponent, {
+        width: '500px',
+        data: {heading: "Errors - Item Add ", message: "You have following Errors <br> " + errors}
+      });
+      errmsg.afterClosed().subscribe(async result => {
+        if (!result) {
+          return;
+        }
+      });
+    } else {
+
+      this.item = this.form.getRawValue();
+      this.item.photo = btoa(this.imageitmurl);
+      // @ts-ignore
+      this.item.dointroduced = this.dp.transform(this.item.dointroduced, "YYYY-MM-dd");
+
+      let itemdata: string = "";
+
+      itemdata = itemdata + "<br>Name is : " + this.item.name;
+      itemdata = itemdata + "<br>Code is : " + this.item.code;
+
+      const confirm = this.dg.open(ConfirmComponent, {
+        width: '500px',
+        data: {
+          heading: "Confirmation - Item Add",
+          message: "Are you sure to Add the following Item? <br> <br>" + itemdata
+        }
+      });
+
+      let addstatus: boolean = false;
+      let addmessage: string = "Server Not Found";
+
+      confirm.afterClosed().subscribe(async result => {
+        if (result) {
+          this.is.add(this.item).then((response: [] | undefined) => {
+            console.log("Res-" + response);
+            //console.log("Un-" + response == undefined);
+            if (response != undefined) { // @ts-ignore
+              console.log("Add-" + response['id'] + "-" + response['url'] + "-" + (response['errors'] == ""));
+              // @ts-ignore
+              addstatus = response['errors'] == "";
+              console.log("Add Sta-" + addstatus);
+              if (!addstatus) { // @ts-ignore
+                addmessage = response['errors'];
+              }
+            } else {
+              console.log("undefined");
+              addstatus = false;
+              addmessage = "Content Not Found"
+            }
+          }).finally(() => {
+
+            if (addstatus) {
+              addmessage = "Successfully Saved";
+              this.form.reset();
+              this.clearImage();
+              Object.values(this.form.controls).forEach(control => {
+                control.markAsTouched();
+              });
+              this.loadTable("");
+            }
+
+            const stsmsg = this.dg.open(MessageComponent, {
+              width: '500px',
+              data: {heading: "Status -Item Add", message: addmessage}
+            });
+
+            stsmsg.afterClosed().subscribe(async result => {
+              if (!result) {
+                return;
+              }
+            });
+          });
+        }
+      });
+    }
+  }
+
+  clear() {}
+  update() {}
+  delete() {}
 
 }

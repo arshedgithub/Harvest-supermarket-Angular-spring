@@ -37,6 +37,12 @@
             <input matInput formControlName="name">
           </mat-form-field>
 
+          <mat-form-field appearance="outline">
+            <mat-label>Item Code</mat-label>
+            <input matInput formControlName="code">
+            <mat-hint>Last Item Code is - {{lastitemcode}}</mat-hint>
+          </mat-form-field>
+
           <div id="radio">
             <mat-radio-group formControlName="unittype">
               <mat-radio-button *ngFor="let unittype of unittypes" [value]="unittype">{{ unittype.name }}&nbsp;</mat-radio-button>
@@ -51,11 +57,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Sale Price</mat-label>
             <input matInput formControlName="sprice">
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Mobile</mat-label>
-            <input matInput formControlName="mobile">
           </mat-form-field>
 
           <div id="imgpanel">
@@ -76,7 +77,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Select a Brand</mat-label>
+            <mat-label>Select Status</mat-label>
             <mat-select formControlName="itemstatus">
               <mat-option value="null">Not Selected</mat-option>
               <mat-option *ngFor="let itemstatus of itemstauses" [value]="itemstatus">{{ itemstatus.name }}</mat-option>
@@ -89,6 +90,13 @@
             <mat-datepicker-toggle matIconSuffix [for]="intdate"></mat-datepicker-toggle>
             <mat-datepicker #intdate></mat-datepicker>
           </mat-form-field>
+
+          <div id="butpanel">
+            <button mat-raised-button (click)="add()" [disabled]="!enaadd">Add</button>
+            <button mat-raised-button (click)="clear()">Clear</button>
+            <button mat-raised-button (click)="update()" [disabled]="!enaupd">Update</button>
+            <button mat-raised-button (click)="delete()" [disabled]="">Delete</button>
+          </div>
 
         </form>
       </mat-card-content>

@@ -329,10 +329,7 @@ export class EmployeeComponent {
 
       this.employee = this.form.getRawValue();
 
-      //console.log("Photo-Before"+this.employee.photo);
       this.employee.photo = btoa(this.imageempurl);
-      //console.log("Photo-After"+this.employee.photo);
-
       let empdata: string = "";
 
       empdata = empdata + "<br>Number is : " + this.employee.number;
