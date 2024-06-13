@@ -1,6 +1,8 @@
 package lk.earth.earthuniversity.report;
 
+import lk.earth.earthuniversity.report.dao.CountByCategoryDao;
 import lk.earth.earthuniversity.report.dao.CountByDesignaitonDao;
+import lk.earth.earthuniversity.report.entity.CountByCategory;
 import lk.earth.earthuniversity.report.entity.CountByDesignation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 public class ReportController {
     @Autowired
     private CountByDesignaitonDao countbydesignaitondao;
+    @Autowired
+    private CountByCategoryDao countbycategorydao;
 
     @GetMapping(path ="/countbydesignation",produces = "application/json")
     public List<CountByDesignation> get() {
@@ -36,6 +40,13 @@ public class ReportController {
         }
 
         return designations;
+    }
+
+    @GetMapping(path ="/itemcountbycategory",produces = "application/json")
+    public List<CountByCategory> getCountByCategory() {
+
+        List<CountByCategory> countByCategories = this.countbycategorydao.findCountByCategory();
+        return countByCategories;
     }
 }
 
