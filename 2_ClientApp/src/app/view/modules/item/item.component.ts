@@ -20,7 +20,7 @@ import {Unittype} from "../../../entity/unittype";
 import {RegexService} from "../../../service/regexservice";
 import {DatePipe} from "@angular/common";
 import {MessageComponent} from "../../../util/dialog/message/message.component";
-import {from, last} from "rxjs";
+import {from, last, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-item',
@@ -53,6 +53,8 @@ export class ItemComponent {
   brands: Array<Brand> = [];
   unittypes: Array<Unittype> = [];
 
+  itemNameSubs!: Subscription;
+
   regexes!: any;
   uiassist: UiAssist;
   col!: { [p: string]: any; }
@@ -64,6 +66,7 @@ export class ItemComponent {
   item!: Item;
   olditem!: Item;
   lastitemcode!: string;
+  selectedRow!: any;
 
   constructor(
     private fb:FormBuilder,
@@ -104,7 +107,7 @@ export class ItemComponent {
       'unittype': new FormControl('', Validators.required),
       'pprice': new FormControl('', Validators.required),
       'sprice': new FormControl('', Validators.required),
-      'photo': new FormControl(''),
+      'photo': new FormControl('', Validators.required),
       'quantity': new FormControl('', Validators.required),
       'rop': new FormControl('', Validators.required),
       'itemstatus': new FormControl('', Validators.required),
@@ -188,7 +191,6 @@ export class ItemComponent {
         }
       );
     }
-
     this.enableButtons(true,false,false);
   }
 
@@ -280,7 +282,8 @@ export class ItemComponent {
   }
 
   getItemName(): void {
-    this.form.get("brand")?.valueChanges.subscribe((brand: Brand) => {
+    // @ts-ignore
+    this.itemNameSubs = this.form.get("brand")?.valueChanges.subscribe((brand: Brand) => {
       let subcategory = this.form.get("subcategory")?.value;
       let itemname = brand.name + " " + subcategory.name;
       this.form.get("name")?.setValue(itemname);
@@ -422,6 +425,44 @@ export class ItemComponent {
     }
   }
 
+  fillForm(item: Item): void {
+    this.selectedRow = item;
+
+    this.item = JSON.parse(JSON.stringify(item));
+    this.olditem = JSON.parse(JSON.stringify(item));
+
+    if (this.item.photo != null) {
+      this.imageitmurl = atob(this.item.photo);
+      this.form.controls['photo'].clearValidators();
+    } else {
+      this.clearImage();
+    }
+    this.item.photo = "";
+    this.itemNameSubs.unsubscribe();
+
+    this.form.get("category")?.valueChanges.subscribe((cat: Category) => {
+      let qry = "?categoryid=" + cat.id;
+      this.subcts.getAllList(qry).then((sct: Subcategory[]) => {
+        this.subcategories = sct;
+        // @ts-ignore
+        this.item.subcategory = this.subcategories.find(s => s.id === this.item.subcategory.id);
+
+        this.brs.getAllList(qry).then((brands: Brand[]) => {
+          this.brands = brands;
+          // @ts-ignore
+          this.item.brand = this.brands.find(b => b.id === this.item.brand.id);
+
+          this.form.patchValue(this.item);
+          this.form.markAsPristine();
+        });
+      });
+    });
+
+    // @ts-ignore
+    this.item.subcategory.category = this.categories.find((c: Category) => c.id === this.item.subcategory.category.id);
+    this.form.controls['category'].setValue(this.item.subcategory.category);
+
+  }
   clear() {}
   update() {}
   delete() {}

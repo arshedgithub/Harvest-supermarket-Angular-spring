@@ -13,14 +13,13 @@ export class Item {
   public unittype !: Unittype;
   public sprice !: number;
   public pprice !: number;
-  public photo !: String;
+  public photo !: string;
   public quantity !: number;
   public rop !: number;
   public itemstatus !: Itemstatus;
-  public dointroduced !: String;
+  public dointroduced !: string;
 
-
-  constructor(id: number, brand: Brand, subcategory: Subcategory, name: string, code: string, unittype: Unittype, sprice: number, pprice: number, photo: String, quantity: number, rop: number, itemstatus: Itemstatus, dointroduced: String) {
+  constructor(id: number, brand: Brand, subcategory: Subcategory, name: string, code: string, unittype: Unittype, sprice: number, pprice: number, photo: string, quantity: number, rop: number, itemstatus: Itemstatus, dointroduced: string) {
     this.id = id;
     this.brand = brand;
     this.subcategory = subcategory;
