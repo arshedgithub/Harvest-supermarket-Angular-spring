@@ -47,6 +47,7 @@ import { ClassComponent } from './view/modules/class/class.component';
 import { BookdistributionComponent } from './view/modules/bookdistribution/bookdistribution.component';
 import { ItemComponent } from './view/modules/item/item.component';
 import {MatRadioModule} from "@angular/material/radio";
+import { ItemcountbycategoryComponent } from './report/view/itemcountbycategory/itemcountbycategory.component';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import {MatRadioModule} from "@angular/material/radio";
     BatchregistrationComponent,
     ClassComponent,
     BookdistributionComponent,
-    ItemComponent
+    ItemComponent,
+    ItemcountbycategoryComponent
 
   ],
     imports: [
