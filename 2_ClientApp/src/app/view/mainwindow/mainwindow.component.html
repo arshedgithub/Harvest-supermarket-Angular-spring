@@ -56,6 +56,14 @@
         </ng-container>
       </mat-expansion-panel>
 
+      <mat-expansion-panel *ngIf="isMenuVisible('Inventory')">
+        <mat-expansion-panel-header>
+          <mat-list-item>
+            <a><mat-icon>poll</mat-icon>Reports</a>
+          </mat-list-item>
+        </mat-expansion-panel-header>
+        <mat-list-item *ngFor="let menuItem of reportGroup" [routerLink]="menuItem.routerLink"><a>{{ menuItem.name }}</a></mat-list-item>
+      </mat-expansion-panel>
 
       <mat-expansion-panel *ngIf="isMenuVisible('Academic')">
         <mat-expansion-panel-header>
@@ -95,10 +103,6 @@
           </mat-list-item>
         </ng-container>
       </mat-expansion-panel>
-
-      <mat-list-item>
-        <a routerLink="reports"><mat-icon>poll</mat-icon>Report</a>
-      </mat-list-item>
 
     </mat-nav-list>
   </mat-sidenav>

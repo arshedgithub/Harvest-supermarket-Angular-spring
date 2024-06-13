@@ -22,7 +22,7 @@ export class ReportService {
 
   async itemCountByCategory(): Promise<Array<CountByCategory>> {
 
-    const countbycategories = await this.http.get<Array<CountByCategory>>('http://localhost:8080/reports/itemcountbycategories').toPromise();
+    const countbycategories = await this.http.get<Array<CountByCategory>>('http://localhost:8080/reports/itemcountbycategory').toPromise();
     if(countbycategories == undefined){
       return [];
     }

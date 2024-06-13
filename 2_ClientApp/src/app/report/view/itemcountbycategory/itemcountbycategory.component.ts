@@ -1,5 +1,4 @@
 import {Component, ViewChild} from '@angular/core';
-import {CountByDesignation} from "../../entity/countbydesignation";
 import {MatTableDataSource} from "@angular/material/table";
 import {ReportService} from "../../reportservice";
 import {CountByCategory} from "../../entity/countbycategory";
@@ -15,9 +14,9 @@ export class ItemcountbycategoryComponent {
   countbyCategories!: CountByCategory[];
   data!: MatTableDataSource<CountByCategory>;
 
-  columns: string[] = ['designation', 'count'];
-  headers: string[] = ['Designation', 'Count'];
-  binders: string[] = ['designation', 'count'];
+  columns: string[] = ['category', 'count'];
+  headers: string[] = ['Category', 'Count'];
+  binders: string[] = ['category', 'count'];
 
   @ViewChild('barchart', { static: false }) barchart: any;
   @ViewChild('piechart', { static: false }) piechart: any;
@@ -69,7 +68,7 @@ export class ItemcountbycategoryComponent {
     });
 
     const barOptions = {
-      title: 'Designation Count (Bar Chart)',
+      title: 'Item Count (Bar Chart)',
       subtitle: 'Count of Items By Category',
       bars: 'horizontal',
       height: 400,
@@ -77,13 +76,13 @@ export class ItemcountbycategoryComponent {
     };
 
     const pieOptions = {
-      title: 'Designation Count (Pie Chart)',
+      title: 'Item Count (Pie Chart)',
       height: 400,
       width: 550
     };
 
     const lineOptions = {
-      title: 'Designation Count (Line Chart)',
+      title: 'Item Count (Line Chart)',
       height: 400,
       width: 600
     };

@@ -12,11 +12,13 @@ import {DarkModeService} from "../../service/DarkModeService";
 export class MainwindowComponent {
 
   opened: boolean = true;
-
+  reportGroup: any[] = [
+    {name: "Count By Designation", routerLink: "reports/countbydesignation"},
+    {name: "Count By Category", routerLink: "reports/countbycategory"}
+  ];
 
   constructor(private router: Router,public authService: AuthorizationManager,public darkModeSevice:DarkModeService) {
   }
-
 
   logout(): void {
     this.router.navigateByUrl("login")
