@@ -85,7 +85,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Assignment Date</mat-label>
+            <mat-label>Inroduced Date</mat-label>
             <input matInput [matDatepicker]="intdate" formControlName="dointroduced">
             <mat-datepicker-toggle matIconSuffix [for]="intdate"></mat-datepicker-toggle>
             <mat-datepicker #intdate></mat-datepicker>
@@ -95,7 +95,7 @@
             <button mat-raised-button (click)="add()" [disabled]="!enaadd">Add</button>
             <button mat-raised-button (click)="clear()">Clear</button>
             <button mat-raised-button (click)="update()" [disabled]="!enaupd">Update</button>
-            <button mat-raised-button (click)="delete()" [disabled]="">Delete</button>
+            <button mat-raised-button (click)="delete()" [disabled]="!enadel">Delete</button>
           </div>
 
         </form>

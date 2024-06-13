@@ -111,7 +111,7 @@ export class ItemComponent {
       'quantity': new FormControl('', Validators.required),
       'rop': new FormControl('', Validators.required),
       'itemstatus': new FormControl('', Validators.required),
-      'dointroduced': new FormControl({value: new Date(),  disabled: true}, Validators.required)
+      'dointroduced': new FormControl({value: new Date(), disabled: true}, Validators.required)
     });
 
   }
@@ -439,6 +439,8 @@ export class ItemComponent {
     }
     this.item.photo = "";
     this.itemNameSubs.unsubscribe();
+    // @ts-ignore
+    this.form.get("code")?.disable(true);
 
     this.form.get("category")?.valueChanges.subscribe((cat: Category) => {
       let qry = "?categoryid=" + cat.id;
@@ -451,9 +453,15 @@ export class ItemComponent {
           this.brands = brands;
           // @ts-ignore
           this.item.brand = this.brands.find(b => b.id === this.item.brand.id);
+          // @ts-ignore
+          this.item.unittype = this.unittypes.find(u => u.id === this.item.unittype.id);
+          // @ts-ignore
+          this.item.itemstatus = this.itemstauses.find(s => s.id === this.item.itemstatus.id);
 
           this.form.patchValue(this.item);
           this.form.markAsPristine();
+
+          this.enableButtons(false, true, true);
         });
       });
     });
@@ -463,8 +471,151 @@ export class ItemComponent {
     this.form.controls['category'].setValue(this.item.subcategory.category);
 
   }
-  clear() {}
-  update() {}
-  delete() {}
+  clear():void{
+    const confirm = this.dg.open(ConfirmComponent, {
+      width: '500px',
+      data: {
+        heading: "Confirmation - Item Clear",
+        message: "Are you sure to Clear following Details ? <br> <br>"
+      }
+    });
 
+    confirm.afterClosed().subscribe(async result => {
+      if (result) {
+        this.form.reset();
+        this.clearImage();
+        this.createForm();
+      }
+    });
+  }
+
+  getUpdates(): string {
+
+    let updates: string = "";
+    for (const controlName in this.form.controls) {
+      const control = this.form.controls[controlName];
+      if (control.dirty) {
+        updates = updates + "<br>" + controlName.charAt(0).toUpperCase() + controlName.slice(1)+" Changed";
+      }
+    }
+    return updates;
+  }
+
+  update() {
+
+    let errors = this.getErrors();
+    if (errors != "") {
+      const errmsg = this.dg.open(MessageComponent, {
+        width: '500px',
+        data: {heading: "Errors - Item Update ", message: "You have following Errors <br> " + errors}
+      });
+      errmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+    } else {
+      let updates: string = this.getUpdates();
+      if (updates != "") {
+        let updstatus: boolean = false;
+        let updmessage: string = "Server Not Found";
+
+        const confirm = this.dg.open(ConfirmComponent, {
+          width: '500px',
+          data: {
+            heading: "Confirmation - Item Update",
+            message: "Are you sure to Save folowing Updates? <br> <br>" + updates
+          }
+        });
+        confirm.afterClosed().subscribe(async result => {
+          if (result) {
+            this.item = this.form.getRawValue();
+            if (this.form.controls['photo'].dirty) this.item.photo = btoa(this.imageitmurl);
+            else this.item.photo = this.olditem.photo;
+            this.item.id = this.olditem.id;
+
+            this.is.update(this.item).then((response: [] | undefined) => {
+              //console.log("Res-" + response);
+              // console.log("Un-" + response == undefined);
+              if (response != undefined) { // @ts-ignore
+                //console.log("Add-" + response['id'] + "-" + response['url'] + "-" + (response['errors'] == ""));
+                // @ts-ignore
+                updstatus = response['errors'] == "";
+                //console.log("Upd Sta-" + updstatus);
+                if (!updstatus) { // @ts-ignore
+                  updmessage = response['errors'];
+                }
+              } else {
+                //console.log("undefined");
+                updstatus = false;
+                updmessage = "Content Not Found"
+              }
+            } ).finally(() => {
+              if (updstatus) {
+                updmessage = "Successfully Updated";
+                this.form.reset();
+                this.clearImage();
+                Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
+                this.loadTable("");
+              }
+
+              const stsmsg = this.dg.open(MessageComponent, {
+                width: '500px',
+                data: {heading: "Status -Employee Add", message: updmessage}
+              });
+              stsmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+            });
+          }
+        });
+      }
+      else {
+        const updmsg = this.dg.open(MessageComponent, {
+          width: '500px',
+          data: {heading: "Confirmation - Employee Update", message: "Nothing Changed"}
+        });
+        updmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+      }
+    }
+  }
+
+  delete() {
+
+    const confirm = this.dg.open(ConfirmComponent, {
+      width: '500px',
+      data: {
+        heading: "Confirmation - Employee Delete",
+        message: "Are you sure to Delete following Item? <br> <br>" + this.item.name
+      }
+    });
+
+    confirm.afterClosed().subscribe(async result => {
+      if (result) {
+        let delstatus: boolean = false;
+        let delmessage: string = "Server Not Found";
+
+        this.is.delete(this.item.id).then((response: [] | undefined) => {
+
+          if (response != undefined) { // @ts-ignore
+            delstatus = response['errors'] == "";
+            if (!delstatus) { // @ts-ignore
+              delmessage = response['errors'];
+            }
+          } else {
+            delstatus = false;
+            delmessage = "Content Not Found"
+          }
+        }).finally(() => {
+          if (delstatus) {
+            delmessage = "Successfully Deleted";
+            this.form.reset();
+            this.clearImage();
+            Object.values(this.form.controls).forEach(control => { control.markAsTouched(); });
+            this.loadTable("");
+          }
+
+          const stsmsg = this.dg.open(MessageComponent, {
+            width: '500px',
+            data: {heading: "Status - Item Delete ", message: delmessage}
+          });
+          stsmsg.afterClosed().subscribe(async result => { if (!result) { return; } });
+        });
+      }
+    });
+  }
 }

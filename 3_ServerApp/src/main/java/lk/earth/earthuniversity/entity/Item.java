@@ -36,11 +36,11 @@ public class Item {
     private byte[] photo;
     @Basic
     @Column(name = "quantity")
-    @RegexPattern(reg = "^\\d{2,3}$", msg = "Invalid Quantity")
+    @RegexPattern(reg = "^\\d{1,3}$", msg = "Invalid Quantity")
     private Integer quantity;
     @Basic
     @Column(name = "rop")
-    @RegexPattern(reg = "^\\d{2}$", msg = "Invalid ROP")
+    @RegexPattern(reg = "^\\d{1,3}$", msg = "Invalid ROP")
     private Integer rop;
     @Basic
     @Column(name = "dointroduced")
